@@ -24,6 +24,7 @@ public class OptimizedHeapMinPQ<E> implements MinPQ<E> {
     public OptimizedHeapMinPQ() {
         elements = new ArrayList<>();
         elementsToIndex = new HashMap<>();
+        elements.add(new PriorityNode<>(null, -1.0));
     }
 
     @Override
@@ -31,14 +32,73 @@ public class OptimizedHeapMinPQ<E> implements MinPQ<E> {
         if (contains(element)) {
             throw new IllegalArgumentException("Already contains " + element);
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        elements.add(new PriorityNode<> (element, priority));
+        int index = swim(elements.size()-1);
+        elementsToIndex.put(element, index);
     }
 
+    private int swim(int k) {
+        int parentNode = parent(k);
+        while (accessible(parentNode) && (elements.get(k).priority() < elements.get(parentNode).priority())) {
+            elementsToIndex.replace(elements.get(parentNode).element(), k);
+            elementsToIndex.replace(elements.get(k).element(), parentNode);
+            swap(k, parentNode);
+            k = parentNode;
+            parentNode = parent(k);
+        }
+        return k;
+    }
+
+    private int sink(int k) {
+        int child = min(left(k), right(k));
+        while(accessible(child) && (elements.get(k).priority() > elements.get(child).priority())) {
+            this.elementsToIndex.replace(elements.get(child).element(), k);
+            this.elementsToIndex.replace(elements.get(k).element(), child);
+            swap(k, child);
+            k = child;
+            child = min(left(k), right(k));
+        }
+        return k;
+    }
+
+    private static int parent(int k) {
+        return k / 2;
+    }
+
+    private static int left(int k) {
+        return k * 2;
+    }
+
+    private static int right(int k) {
+        return left(k) + 1;
+    }
+
+    private int min(int a, int b) {
+        if(!accessible(a) && !accessible(b)) {
+            return 0;
+        }
+        else if (accessible(a) && (!accessible(b)
+                || (elements.get(a).priority() < elements.get(b).priority()))) {
+            return a;
+        }
+        else {
+            return b;
+        }
+    }
+    private void swap(int a, int b) {
+        this.elementsToIndex.replace(elements.get(a).element(), b);
+        this.elementsToIndex.replace(elements.get(a).element(), b );
+        PriorityNode<E> temp = elements.get(a);
+        elements.set(a, elements.get(b));
+        elements.set(b, temp);
+    }
+
+    private boolean accessible(int k) {
+        return 1 <= k && k <= size();
+    }
     @Override
     public boolean contains(E element) {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elementsToIndex.containsKey(element);
     }
 
     @Override
@@ -46,8 +106,7 @@ public class OptimizedHeapMinPQ<E> implements MinPQ<E> {
         if (isEmpty()) {
             throw new NoSuchElementException("PQ is empty");
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements.get(1).element();
     }
 
     @Override
@@ -55,8 +114,12 @@ public class OptimizedHeapMinPQ<E> implements MinPQ<E> {
         if (isEmpty()) {
             throw new NoSuchElementException("PQ is empty");
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        E minPriority = peekMin();
+        swap(0, size()-1);
+        elements.remove(size()-1);
+        elementsToIndex.remove(elements.get(size()).element());
+        sink(0);
+        return minPriority;
     }
 
     @Override
@@ -64,13 +127,17 @@ public class OptimizedHeapMinPQ<E> implements MinPQ<E> {
         if (!contains(element)) {
             throw new NoSuchElementException("PQ does not contain " + element);
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        int oldPriority = elementsToIndex.get(element);
+        elements.get(oldPriority).setPriority(priority);
+        int newPriority = sink(oldPriority);
+        if(newPriority == oldPriority) {
+            newPriority = swim(oldPriority);
+        }
+        this.elementsToIndex.replace(this.elements.get(newPriority).element(), newPriority);
     }
 
     @Override
     public int size() {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements.size() - 1;
     }
 }

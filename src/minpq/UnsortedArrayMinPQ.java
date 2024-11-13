@@ -28,14 +28,19 @@ public class UnsortedArrayMinPQ<E> implements MinPQ<E> {
         if (contains(element)) {
             throw new IllegalArgumentException("Already contains " + element);
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        elements.add(new PriorityNode<>(element, priority));
     }
 
     @Override
     public boolean contains(E element) {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        PriorityNode<E> contains;
+        for (int i = 0; i < elements.size(); i++) {
+            contains = elements.get(i);
+            if (contains.element().equals(element)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -43,8 +48,15 @@ public class UnsortedArrayMinPQ<E> implements MinPQ<E> {
         if (isEmpty()) {
             throw new NoSuchElementException("PQ is empty");
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        double minPriority = elements.get(0).priority();
+        int k = 0;
+        for (int i = 0; i < elements.size(); i++) {
+            if (minPriority > elements.get(i).priority()) {
+                minPriority = elements.get(i).priority();
+                k = i;
+            }
+        }
+        return elements.get(k).element();
     }
 
     @Override
@@ -52,8 +64,17 @@ public class UnsortedArrayMinPQ<E> implements MinPQ<E> {
         if (isEmpty()) {
             throw new NoSuchElementException("PQ is empty");
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        double minPriority = elements.get(0).priority();
+        int k = 0;
+        for (int i = 0; i < elements.size(); i++) {
+            if (minPriority > elements.get(i).priority()) {
+                minPriority = elements.get(i).priority();
+                k = i;
+            }
+        }
+        E min = elements.get(k).element();
+        elements.remove(k);
+        return min;
     }
 
     @Override
@@ -61,13 +82,16 @@ public class UnsortedArrayMinPQ<E> implements MinPQ<E> {
         if (!contains(element)) {
             throw new NoSuchElementException("PQ does not contain " + element);
         }
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        PriorityNode<E> temp= new PriorityNode<>(element, priority);
+        for (int i = 0; i < elements.size(); i++) {
+            if (temp.element().equals(element)) {
+                elements.get(i).setPriority(priority);
+            }
+        }
     }
 
     @Override
     public int size() {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements.size();
     }
 }
