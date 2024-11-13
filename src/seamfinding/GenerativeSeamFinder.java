@@ -70,7 +70,12 @@ public class GenerativeSeamFinder implements SeamFinder {
             @Override
             public List<Edge<Node>> neighbors(Picture picture, EnergyFunction f) {
                 // TODO: Replace with your code
-                throw new UnsupportedOperationException("Not implemented yet");
+                List<Edge<Node>> result = new ArrayList<>(picture.height());
+                for (int j = 0; j < picture.height(); j ++) {
+                    Pixel to = new Pixel(0, j);
+                    result.add(new Edge<>(this, to, f.apply(picture, 0, j)));
+                }
+                return result;
             }
         };
         /**
@@ -80,7 +85,7 @@ public class GenerativeSeamFinder implements SeamFinder {
             @Override
             public List<Edge<Node>> neighbors(Picture picture, EnergyFunction f) {
                 // TODO: Replace with your code
-                throw new UnsupportedOperationException("Not implemented yet");
+                return List.of();
             }
         };
 
@@ -127,7 +132,20 @@ public class GenerativeSeamFinder implements SeamFinder {
             @Override
             public List<Edge<Node>> neighbors(Picture picture, EnergyFunction f) {
                 // TODO: Replace with your code
-                throw new UnsupportedOperationException("Not implemented yet");
+                List<Edge<Node>> result = new ArrayList<Edge<Node>>();
+                if (this.x == picture.width() - 1) {
+                    result.add(new Edge<Node>(this, sink, 0));
+                }
+                else {
+                    for (int i = y - 1; i <= y + 1; i ++) {
+                        if (0 <= i && i < picture.height()) {
+                            Pixel to = new Pixel(x + 1, i);
+                            result.add(new Edge<>(this, to, f.apply(picture, x + 1, i)));
+                        }
+
+                    }
+                }
+                return result;
             }
 
             @Override
