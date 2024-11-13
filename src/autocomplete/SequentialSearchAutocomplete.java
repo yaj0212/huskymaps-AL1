@@ -24,13 +24,27 @@ public class SequentialSearchAutocomplete implements Autocomplete {
 
     @Override
     public void addAll(Collection<? extends CharSequence> terms) {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.elements.addAll(terms);
     }
 
     @Override
     public List<CharSequence> allMatches(CharSequence prefix) {
-        // TODO: Replace with your code
-        throw new UnsupportedOperationException("Not implemented yet");
+        ArrayList<CharSequence> matched = new ArrayList<>();
+        if (prefix == null || prefix.length() == 0) {
+            return matched;
+        }
+        //for(CharSequence match: this.elements) {
+        //if (Autocomplete.isPrefixOf(prefix, match)) {
+        //matched.add(match);
+        //} else {
+        //return matched;
+        //}
+        //}
+        for (int i = 0; i < this.elements.size(); i++){
+            if (Autocomplete.isPrefixOf(prefix, this.elements.get(i))) {
+                matched.add(this.elements.get(i));
+            }
+        }
+        return matched;
     }
 }
